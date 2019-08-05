@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="600" height="400" style="background:#000"></canvas>
+    <div>
+        <input type="color" id="color" value="#ffffff">
+        <input type="range" id="range" min="10" max="50">
+        <button id="del">橡皮擦</button>
+        <button id="brush">画笔</button>
+        <button id="clear">垃圾桶</button>
+        <button id="save">保存</button>
+    </div>
+
+    <script>
+        var canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d');
+        bindEvent()
+
+        function bindEvent() {
+            canvas.onmousedown = down;
+            del.onclick = delFn;
+            brush.onclick = brushFn;
+            clear.onclick = clearFn;
+            save.onclick = saveFn;
+        }
+        //垃圾桶 clearFn
+        function clearFn(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        // 橡皮擦
+        function delFn(){
+            ctx.globalCompositeOperation='destination-out';
+        }
+        //画笔
+        function brushFn(){
+            console.log(1)
+            ctx.globalCompositeOperation='source-over';
+        }
+        // 保存
+        function saveFn(){
+            console.log(1)
+           var src = canvas.toDataURL();//把canvas中的图片 保存为base64 编码 路径存储
+           var img= new Image();
+           img.src = src;
+           img.onload = function(){
+            document.body.appendChild(img);
+           }
+        }
+        // 按下
+        function down(e){
+            var start = {
+                x:e.offsetX,
+                y:e.offsetY
+            }
+            ctx.beginPath();
+            ctx.strokeStyle = color.value;
+            ctx.lineWidth=range.value;
+            ctx.lineCap = "round";
+            ctx.lineJoin='round';
+
+            ctx.moveTo(start.x,start.y)
+            canvas.onmousemove = move;
+            canvas.onmouseup = up;
+        }
+        function move(e){
+            var end = {
+                x:e.offsetX,
+                y:e.offsetY
+            }
+            ctx.lineTo(end.x,end.y);
+            ctx.stroke();
+
+        }
+        function up(){
+            canvas.onmousemove = null;
+            canvas.onmouseup = null;
+        }
+    </script>
+
+
+</body>
+
+</html>

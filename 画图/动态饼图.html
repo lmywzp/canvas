@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="800" style="border:1px solid red"></canvas>
+
+    <script>
+        var ctx = canvas.getContext('2d');
+        ctx.translate(400, 400);
+        var deg = Math.PI / 180;
+        //随机数
+        function getR(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+        // 模拟json数据  
+        var len = getR(5, 9);
+        var arr = [];
+        for (var i = 0; i < len; i++) {
+            arr.push({
+                color: `rgb(${getR(0,255)},${getR(0,255)},${getR(0,255)})`,
+                val: getR(80, 200)
+            })
+        }
+        //求和  reduce
+        var sum = arr.reduce((sum, next) => {
+            sum += next.val;
+            return sum;
+        }, 0)
+
+        //绘制扇形
+        var start = 0,
+            init = 0;
+        arr.forEach(item => {
+            //结束角度
+            var end = start + item.val / sum * 360;
+            //绘制扇形
+            arc(start,end,item)
+            start = end;
+        })
+        function arc(start,end,item){
+            var init = start;
+            draw();
+            function draw() {
+                console.log(init)
+                init++;
+                if (init <= end) {
+                    window.requestAnimationFrame(draw)
+                }
+                ctx.beginPath();
+                ctx.fillStyle = item.color;
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, 200, start * deg, init * deg);
+                ctx.fill();
+                console.log(end)
+            }
+        }
+    </script>
+
+
+
+</body>
+
+</html>
